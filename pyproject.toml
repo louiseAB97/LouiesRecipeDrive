@@ -1,0 +1,11 @@
+[project]
+name = "louies-recipe-drive"
+version = "0.1.0"
+description = "Statische receptensite: eenmalige import uit recepten.txt en statusoverzicht."
+requires-python = ">=3.13"
+dependencies = [
+    "pyyaml==6.0.3",
+]
+
+[dependency-groups]
+dev = []

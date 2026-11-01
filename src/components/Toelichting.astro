@@ -1,0 +1,34 @@
+---
+import { marked } from "marked";
+
+interface Props {
+  tekst: string;
+}
+const { tekst } = Astro.props;
+const html = await marked.parse(tekst);
+---
+
+<div class="toelichting mono muted" set:html={html} />
+
+<style>
+  .toelichting {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    padding: var(--ruimte-s) 0;
+    border-bottom: var(--regel-haarlijn);
+  }
+
+  .toelichting :global(p) {
+    margin-bottom: var(--ruimte-s);
+    max-width: none;
+  }
+
+  .toelichting :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .toelichting :global(a) {
+    color: var(--grijs);
+    overflow-wrap: anywhere;
+  }
+</style>

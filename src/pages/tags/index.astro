@@ -1,0 +1,62 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../../layouts/Basis.astro";
+
+const recepten = await getCollection("recepten", ({ data }) => !data.concept);
+const teller = new Map<string, number>();
+for (const recept of recepten) {
+  for (const tag of recept.data.tags) {
+    teller.set(tag, (teller.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...teller.keys()].sort();
+---
+
+<Basis titel="Tags" beschrijving="Blader door alle tags van Louie's Recipe Drive.">
+  <h1>Tags</h1>
+  {
+    tags.length === 0 ? (
+      <p class="muted">
+        Er zijn nog geen tags. Voeg ze toe in de frontmatter van een recept
+        (bijvoorbeeld <code>tags: [pasta, snel]</code>).
+      </p>
+    ) : (
+      <ul class="taglijst" role="list">
+        {tags.map((tag) => (
+          <li>
+            <a href={`/tag/${tag}`}>
+              <span class="tag">#{tag}</span>
+              <span class="mono muted">{teller.get(tag)} recepten</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Basis>
+
+<style>
+  .taglijst {
+    list-style: none;
+    margin: var(--ruimte-l) 0 0;
+    padding: 0;
+  }
+
+  .taglijst a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ruimte-m);
+    padding: var(--ruimte-s) 0;
+    border-bottom: var(--regel-haarlijn);
+    text-decoration: none;
+  }
+
+  .taglijst .tag {
+    font-family: var(--font-mono);
+  }
+
+  .taglijst a:hover .tag {
+    color: var(--accent-hover);
+  }
+</style>

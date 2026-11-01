@@ -1,0 +1,87 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import { kiesSuggesties } from "../utils/suggesties";
+import ReceptKaart from "./ReceptKaart.astro";
+
+interface Props {
+  huidig: CollectionEntry<"recepten">;
+  alle: CollectionEntry<"recepten">[];
+  fotos: Map<string, ImageMetadata[]>;
+}
+
+const { huidig, alle, fotos } = Astro.props;
+const suggesties = kiesSuggesties(huidig, alle);
+---
+
+{
+  suggesties.length > 0 && (
+    <section class="suggesties" aria-labelledby="kop-suggesties">
+      <div class="suggesties-kop">
+        <h2 id="kop-suggesties">Misschien vind je dit ook lekker</h2>
+        <a href="/recepten" class="mono">
+          Alle recepten →
+        </a>
+      </div>
+      <ul class="suggesties-raster" role="list">
+        {suggesties.map((recept) => (
+          <li>
+            <ReceptKaart recept={recept} foto={fotos.get(recept.id)?.[0]} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .suggesties {
+    margin-top: var(--ruimte-xl);
+    padding-top: var(--ruimte-l);
+    border-top: var(--regel-dun);
+  }
+
+  .suggesties-kop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ruimte-m);
+    margin-bottom: var(--ruimte-l);
+  }
+
+  .suggesties-kop a {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .suggesties-kop a:hover {
+    text-decoration: underline;
+  }
+
+  .suggesties-raster {
+    display: grid;
+    gap: var(--ruimte-l) var(--ruimte-m);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .suggesties-raster {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .suggesties-raster {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media print {
+    .suggesties {
+      display: none;
+    }
+  }
+</style>

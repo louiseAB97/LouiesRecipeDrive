@@ -1,0 +1,165 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import ReceptKaart from "./ReceptKaart.astro";
+
+interface Props {
+  recepten: CollectionEntry<"recepten">[];
+  fotos: Map<string, ImageMetadata[]>;
+  tags: string[];
+}
+
+const { recepten, fotos, tags } = Astro.props;
+---
+
+<section class="verkenner">
+  <div class="filterbalk">
+    <input
+      type="search"
+      id="zoekveld"
+      placeholder="Zoek op titel, ingrediënt of tag…"
+      aria-label="Zoek recepten"
+      autocomplete="off"
+    />
+    {
+      tags.length > 0 && (
+        <div class="tagknoppen" role="group" aria-label="Filter op tag">
+          <button type="button" class="actief" data-tag="">
+            Alles
+          </button>
+          {tags.map((tag) => (
+            <button type="button" data-tag={tag}>
+              {tag}
+            </button>
+          ))}
+        </div>
+      )
+    }
+    <p class="teller mono muted">
+      <span id="aantal">{recepten.length}</span> recepten
+    </p>
+  </div>
+
+  <ul class="raster" role="list">
+    {
+      recepten.map((recept) => (
+        <li
+          class="item"
+          data-zoek={`${recept.data.titel} ${recept.data.ingredienten.join(" ")} ${recept.data.tags.join(" ")}`.toLowerCase()}
+          data-tags={recept.data.tags.join(" ")}
+        >
+          <ReceptKaart recept={recept} foto={fotos.get(recept.id)?.[0]} />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<script>
+  const items = [
+    ...document.querySelectorAll<HTMLElement>(".verkenner .item"),
+  ];
+  const veld = document.querySelector<HTMLInputElement>("#zoekveld");
+  const teller = document.querySelector("#aantal");
+  const knoppen = [
+    ...document.querySelectorAll<HTMLButtonElement>(".tagknoppen button"),
+  ];
+  let actieveTag = "";
+
+  function filter() {
+    const zoek = veld?.value.trim().toLowerCase() ?? "";
+    let zichtbaar = 0;
+    for (const item of items) {
+      const pastZoek = item.dataset.zoek?.includes(zoek) ?? true;
+      const pastTag =
+        !actieveTag || (item.dataset.tags ?? "").split(" ").includes(actieveTag);
+      item.hidden = !(pastZoek && pastTag);
+      if (pastZoek && pastTag) zichtbaar++;
+    }
+    if (teller) teller.textContent = String(zichtbaar);
+  }
+
+  veld?.addEventListener("input", filter);
+  for (const knop of knoppen) {
+    knop.addEventListener("click", () => {
+      actieveTag = knop.dataset.tag ?? "";
+      for (const k of knoppen) k.classList.toggle("actief", k === knop);
+      filter();
+    });
+  }
+</script>
+
+<style>
+  .filterbalk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ruimte-s) var(--ruimte-m);
+    margin-bottom: var(--ruimte-l);
+    padding-bottom: var(--ruimte-m);
+    border-bottom: var(--regel-haarlijn);
+  }
+
+  #zoekveld {
+    flex: 1 1 18rem;
+    border: var(--regel-dun);
+    padding: 0 var(--ruimte-s);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    background: var(--papier);
+    color: var(--inkt);
+  }
+
+  .tagknoppen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ruimte-xs);
+  }
+
+  .tagknoppen button {
+    border: var(--regel-dun);
+    background: var(--papier);
+    color: var(--inkt);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0 var(--ruimte-s);
+    cursor: pointer;
+  }
+
+  .tagknoppen button.actief {
+    background: var(--inkt);
+    color: var(--papier);
+  }
+
+  .teller {
+    font-size: 0.8rem;
+    margin: 0;
+    margin-left: auto;
+  }
+
+  .raster {
+    display: grid;
+    gap: var(--ruimte-l) var(--ruimte-m);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .raster {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .raster {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media print {
+    .filterbalk {
+      display: none;
+    }
+  }
+</style>

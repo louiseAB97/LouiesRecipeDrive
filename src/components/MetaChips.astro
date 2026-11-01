@@ -1,0 +1,44 @@
+---
+interface Props {
+  personen: number | null;
+  prijs: string | null;
+  tijd: number | null;
+}
+
+const { personen, prijs, tijd } = Astro.props;
+const chips = [
+  personen ? `${personen} personen` : null,
+  prijs,
+  tijd ? `${tijd} min` : null,
+].filter(Boolean) as string[];
+---
+
+{
+  chips.length > 0 && (
+    <ul class="chips" role="list">
+      {chips.map((chip) => (
+        <li>{chip}</li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ruimte-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--grijs);
+  }
+
+  .chips li {
+    border: var(--regel-haarlijn);
+    padding: 0.2em 0.7em;
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<aside class:list={["nieuwsbrief", { compact }]} aria-label="Nieuwsbrief">
+  {!compact && <h2>Blijf op de hoogte</h2>}
+  {compact && <h3>Nieuwsbrief</h3>}
+  <p class="muted">
+    Nieuwe recepten en keukentips in je inbox. Geen spam, alleen lekkers.
+  </p>
+  <form class="nieuwsbrief-form" action="#" method="post">
+    <label class="visueel-verborgen" for={compact ? "mail-footer" : "mail-main"}
+      >E-mailadres</label
+    >
+    <input
+      id={compact ? "mail-footer" : "mail-main"}
+      type="email"
+      name="email"
+      placeholder="jij@voorbeeld.nl"
+      autocomplete="email"
+      required
+    />
+    <button type="submit">Aanmelden</button>
+  </form>
+  <p class="mono kleine-print muted">Binnenkort actief — de koppeling volgt.</p>
+</aside>
+
+<style>
+  .nieuwsbrief {
+    border: var(--regel-dun);
+    padding: var(--ruimte-l);
+  }
+
+  .nieuwsbrief.compact {
+    border: none;
+    padding: 0;
+  }
+
+  .nieuwsbrief-form {
+    display: flex;
+    gap: var(--ruimte-xs);
+    margin-top: var(--ruimte-m);
+  }
+
+  .nieuwsbrief-form input {
+    flex: 1;
+    min-width: 0;
+    border: var(--regel-dun);
+    padding: 0 var(--ruimte-s);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    background: var(--papier);
+    color: var(--inkt);
+  }
+
+  .nieuwsbrief-form button {
+    border: var(--regel-dun);
+    background: var(--inkt);
+    color: var(--papier);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0 var(--ruimte-m);
+    cursor: pointer;
+  }
+
+  .nieuwsbrief-form button:hover {
+    background: var(--papier);
+    color: var(--inkt);
+  }
+
+  .kleine-print {
+    font-size: 0.75rem;
+    margin: var(--ruimte-s) 0 0;
+  }
+
+  @media print {
+    .nieuwsbrief {
+      display: none;
+    }
+  }
+</style>

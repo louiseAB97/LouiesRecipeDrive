@@ -1,0 +1,52 @@
+<section class="bereiding" aria-labelledby="kop-bereiding">
+  <h2 id="kop-bereiding" class="mono">Bereiding</h2>
+  <div class="stappen">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .bereiding h2 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: var(--ruimte-xs);
+    border-bottom: var(--regel-dun);
+  }
+
+  /* Elke alinea wordt automatisch een genummerde stap met een dunne lijn. */
+  .stappen {
+    counter-reset: stap;
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: var(--tekst-breedte);
+  }
+
+  .stappen :global(p),
+  .stappen :global(ol),
+  .stappen :global(ul) {
+    position: relative;
+    counter-increment: stap;
+    padding: var(--ruimte-m) 0 var(--ruimte-m) 3rem;
+    margin: 0;
+    border-bottom: var(--regel-haarlijn);
+    max-width: none;
+  }
+
+  .stappen :global(p)::before {
+    content: counter(stap);
+    position: absolute;
+    left: 0;
+    top: var(--ruimte-m);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--grijs);
+  }
+
+  .stappen :global(ol),
+  .stappen :global(ul) {
+    list-style-position: inside;
+  }
+</style>

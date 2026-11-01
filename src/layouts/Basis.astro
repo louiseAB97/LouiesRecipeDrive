@@ -1,0 +1,143 @@
+---
+import "../styles/tokens.css";
+import "../styles/basis.css";
+import NieuwsbriefBlok from "../components/NieuwsbriefBlok.astro";
+
+interface Props {
+  titel: string;
+  beschrijving?: string;
+  ogAfbeelding?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { titel, beschrijving, ogAfbeelding, jsonLd } = Astro.props;
+const sitetitel = "Louie's Recipe Drive";
+const volleTitel = titel === sitetitel ? titel : `${titel} · ${sitetitel}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{volleTitel}</title>
+    {beschrijving && <meta name="description" content={beschrijving} />}
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={sitetitel} />
+    <meta property="og:title" content={volleTitel} />
+    <meta property="og:url" content={canonical} />
+    {beschrijving && <meta property="og:description" content={beschrijving} />}
+    {ogAfbeelding && <meta property="og:image" content={ogAfbeelding} />}
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/">Louie's Recipe Drive</a>
+      <nav aria-label="Hoofdnavigatie">
+        <a href="/recepten">Recepten</a>
+        <a href="/tags">Tags</a>
+        <a href="/zoeken">Zoeken</a>
+        <a href="/over">Over</a>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-tekst">
+        <p class="wordmark">Louie's Recipe Drive</p>
+        <p class="muted">
+          Recepten door de jaren heen — verzameld, getest en opgeschreven door Louie.
+        </p>
+        <nav aria-label="Footer" class="footer-links">
+          <a href="/privacy">Privacy</a>
+          <a href="/over">Over</a>
+        </nav>
+      </div>
+      <NieuwsbriefBlok compact />
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ruimte-s);
+    padding: var(--ruimte-s) var(--ruimte-m);
+    border-bottom: var(--regel-dun);
+  }
+
+  .wordmark {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .site-header nav {
+    display: flex;
+    gap: var(--ruimte-m);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .site-header nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  .site-header nav a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .site-footer {
+    border-top: var(--regel-dun);
+    margin-top: var(--ruimte-xl);
+    padding: var(--ruimte-l) var(--ruimte-m);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--ruimte-l);
+    max-width: var(--pagina-breedte);
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--ruimte-m);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-top: var(--ruimte-m);
+  }
+
+  @media (min-width: 48rem) {
+    .site-footer {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media print {
+    .site-header,
+    .site-footer {
+      display: none;
+    }
+  }
+</style>

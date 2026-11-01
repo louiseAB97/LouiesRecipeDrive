@@ -1,0 +1,34 @@
+---
+import Basis from "../layouts/Basis.astro";
+---
+
+<Basis titel="Pagina niet gevonden" beschrijving="Deze pagina bestaat niet.">
+  <div class="niet-gevonden">
+    <p class="code mono">404</p>
+    <h1>Deze pagina bestaat niet</h1>
+    <p class="muted">
+      Misschien is het recept opgegeten. Probeer het opnieuw via het overzicht.
+    </p>
+    <a class="terug mono" href="/recepten">← Alle recepten</a>
+  </div>
+</Basis>
+
+<style>
+  .niet-gevonden {
+    max-width: 34rem;
+    padding: var(--ruimte-xl) 0;
+  }
+
+  .code {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: var(--ruimte-m);
+  }
+
+  .terug {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../layouts/Basis.astro";
+import ReceptenVerkenner from "../components/ReceptenVerkenner.astro";
+import { fotosPerRecept } from "../utils/fotos";
+
+const recepten = await getCollection("recepten", ({ data }) => !data.concept);
+const tags = [...new Set(recepten.flatMap((r) => r.data.tags))].sort();
+---
+
+<Basis titel="Zoeken" beschrijving="Zoek in alle recepten van Louie's Recipe Drive.">
+  <h1>Zoeken</h1>
+  <p class="muted">Zoek op titel, ingrediënt of tag.</p>
+  <ReceptenVerkenner recepten={recepten} fotos={fotosPerRecept()} tags={tags} />
+</Basis>

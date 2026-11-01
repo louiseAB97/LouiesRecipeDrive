@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import ReceptenVerkenner from "./ReceptenVerkenner.astro";
+import NieuwsbriefBlok from "./NieuwsbriefBlok.astro";
+
+interface Props {
+  recepten: CollectionEntry<"recepten">[];
+  fotos: Map<string, ImageMetadata[]>;
+  tags: string[];
+  kop?: string;
+  ondertitel?: string;
+}
+
+const {
+  recepten,
+  fotos,
+  tags,
+  kop = "Recepten",
+  ondertitel = "Alle recepten door de jaren heen — verzameld, getest en opgeschreven door Louie.",
+} = Astro.props;
+---
+
+<h1>{kop}</h1>
+<p class="ondertitel muted">{ondertitel}</p>
+
+<ReceptenVerkenner recepten={recepten} fotos={fotos} tags={tags} />
+
+<div class="nieuwsbrief-plek">
+  <NieuwsbriefBlok />
+</div>
+
+<style>
+  .ondertitel {
+    margin-bottom: var(--ruimte-l);
+  }
+
+  .nieuwsbrief-plek {
+    margin-top: var(--ruimte-xl);
+    max-width: 34rem;
+  }
+</style>

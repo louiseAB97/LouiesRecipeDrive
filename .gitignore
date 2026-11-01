@@ -1,0 +1,16 @@
+# Astro build-output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Python / uv
+.venv/
+__pycache__/
+
+# Automatisch gegenereerd door `npm run status` — niet met de hand bewerken
+overzicht.json
+
+# macOS
+.DS_Store

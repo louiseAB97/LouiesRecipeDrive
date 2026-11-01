@@ -1,0 +1,41 @@
+---
+interface Props {
+  ingredienten: string[];
+  personen: number | null;
+}
+const { ingredienten, personen } = Astro.props;
+---
+
+<section class="benodigdheden" aria-labelledby="kop-benodigdheden">
+  <h2 id="kop-benodigdheden" class="mono">
+    Benodigdheden{personen ? ` · ${personen} personen` : ""}
+  </h2>
+  <ul role="list">
+    {ingredienten.map((ing) => <li>{ing}</li>)}
+  </ul>
+</section>
+
+<style>
+  .benodigdheden h2 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: var(--ruimte-xs);
+    border-bottom: var(--regel-dun);
+  }
+
+  .benodigdheden ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+
+  .benodigdheden li {
+    padding: var(--ruimte-xs) 0;
+    border-bottom: var(--regel-haarlijn);
+  }
+</style>

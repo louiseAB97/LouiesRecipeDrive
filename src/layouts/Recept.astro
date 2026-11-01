@@ -1,0 +1,222 @@
+---
+import { getImage } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import Basis from "./Basis.astro";
+import Galerij from "../components/Galerij.astro";
+import Ingredienten from "../components/Ingredienten.astro";
+import Toelichting from "../components/Toelichting.astro";
+import MetaChips from "../components/MetaChips.astro";
+import Tags from "../components/Tags.astro";
+import Kruimelpad from "../components/Kruimelpad.astro";
+import Intro from "../components/Intro.astro";
+import Bereiding from "../components/Bereiding.astro";
+import AffiliateSlot from "../components/AffiliateSlot.astro";
+import Suggesties from "../components/Suggesties.astro";
+
+interface Props {
+  recept: CollectionEntry<"recepten">;
+  alleRecepten: CollectionEntry<"recepten">[];
+  fotos: Map<string, ImageMetadata[]>;
+}
+
+const { recept, alleRecepten, fotos } = Astro.props;
+const { titel, personen, prijs, tijd, tags, intro, ingredienten, toelichting } =
+  recept.data;
+const lijst = fotos.get(recept.id) ?? [];
+
+const stripMarkdown = (s: string) =>
+  s
+    .replace(/[*_`#>\-\[\]()\\]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const eersteAlinea = intro ? stripMarkdown(intro.split(/\n\s*\n/)[0]) : null;
+const beschrijving =
+  eersteAlinea && eersteAlinea.length > 0
+    ? eersteAlinea.slice(0, 160)
+    : `Recept voor ${titel} met ${ingredienten
+        .slice(0, 4)
+        .join(", ")
+        .toLowerCase()}.`;
+
+const beeldUrls: string[] = [];
+for (const foto of lijst) {
+  const geoptimaliseerd = await getImage({ src: foto, width: 1200, format: "webp" });
+  beeldUrls.push(new URL(geoptimaliseerd.src, Astro.site).toString());
+}
+
+const stappen = (recept.body ?? "")
+  .split(/\n\s*\n/)
+  .map((s) => s.replace(/\s+/g, " ").trim())
+  .filter(Boolean);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  name: titel,
+  description: beschrijving,
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+  inLanguage: "nl",
+  ...(beeldUrls.length > 0 && { image: beeldUrls }),
+  ...(ingredienten.length > 0 && {
+    recipeIngredient: ingredienten.map((i) => i.replace(/\*+$/, "")),
+  }),
+  ...(stappen.length > 0 && {
+    recipeInstructions: stappen.map((tekst, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      text: tekst,
+    })),
+  }),
+  ...(personen && { recipeYield: `${personen} personen` }),
+  ...(tijd && { totalTime: `PT${tijd}M` }),
+  ...(tags.length > 0 && { keywords: tags.join(", ") }),
+};
+---
+
+<Basis
+  titel={titel}
+  beschrijving={beschrijving}
+  ogAfbeelding={beeldUrls[0]}
+  jsonLd={jsonLd}
+>
+  <article class:list={["recept-grid", { "zonder-fotos": lijst.length === 0 }]}>
+    <div class="vlak-kruimelpad"><Kruimelpad eersteTag={tags[0]} /></div>
+    <h1 class="vlak-titel">{titel}</h1>
+    <div class="vlak-meta">
+      <MetaChips personen={personen} prijs={prijs} tijd={tijd} />
+    </div>
+    <div class="vlak-tags"><Tags tags={tags} /></div>
+    {intro && <div class="vlak-intro"><Intro tekst={intro} /></div>}
+    {
+      lijst.length > 0 && (
+        <div class="vlak-fotos">
+          <Galerij fotos={lijst} titel={titel} />
+        </div>
+      )
+    }
+    <div class="vlak-benodigdheden">
+      <Ingredienten ingredienten={ingredienten} personen={personen} />
+      {toelichting && <Toelichting tekst={toelichting} />}
+    </div>
+    <div class="vlak-bereiding">
+      <Bereiding><slot /></Bereiding>
+    </div>
+    <div class="vlak-affiliate"><AffiliateSlot /></div>
+  </article>
+
+  <Suggesties huidig={recept} alle={alleRecepten} fotos={fotos} />
+</Basis>
+
+<style>
+  .recept-grid {
+    display: grid;
+    gap: var(--ruimte-s) var(--ruimte-xl);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "kruimelpad"
+      "titel"
+      "meta"
+      "tags"
+      "intro"
+      "fotos"
+      "benodigdheden"
+      "bereiding"
+      "affiliate";
+  }
+
+  .vlak-kruimelpad {
+    grid-area: kruimelpad;
+  }
+  .vlak-titel {
+    grid-area: titel;
+    margin: 0;
+  }
+  .vlak-meta {
+    grid-area: meta;
+  }
+  .vlak-tags {
+    grid-area: tags;
+  }
+  .vlak-intro {
+    grid-area: intro;
+    margin-top: var(--ruimte-s);
+  }
+  .vlak-fotos {
+    grid-area: fotos;
+    margin-top: var(--ruimte-m);
+  }
+  .vlak-benodigdheden {
+    grid-area: benodigdheden;
+    margin-top: var(--ruimte-m);
+  }
+  .vlak-bereiding {
+    grid-area: bereiding;
+    margin-top: var(--ruimte-l);
+  }
+  .vlak-affiliate {
+    grid-area: affiliate;
+    margin-top: var(--ruimte-m);
+  }
+
+  @media (min-width: 56rem) {
+    .recept-grid {
+      grid-template-columns: minmax(0, 32.5rem) minmax(0, 1fr);
+      gap: 0 var(--ruimte-xl);
+      grid-template-areas:
+        "fotos         kruimelpad"
+        "fotos         titel"
+        "fotos         meta"
+        "fotos         tags"
+        "fotos         intro"
+        "benodigdheden bereiding"
+        ".             affiliate";
+      align-items: start;
+    }
+
+    .recept-grid.zonder-fotos {
+      grid-template-areas:
+        "benodigdheden kruimelpad"
+        "benodigdheden titel"
+        "benodigdheden meta"
+        "benodigdheden tags"
+        "benodigdheden intro"
+        "benodigdheden bereiding"
+        ".             affiliate";
+    }
+
+    .vlak-kruimelpad {
+      margin-bottom: var(--ruimte-s);
+    }
+    .vlak-meta,
+    .vlak-tags {
+      margin-top: var(--ruimte-s);
+    }
+    .vlak-intro {
+      margin-top: var(--ruimte-m);
+      margin-bottom: var(--ruimte-l);
+    }
+    .vlak-fotos,
+    .vlak-benodigdheden {
+      margin-top: var(--ruimte-l);
+    }
+    .vlak-bereiding {
+      margin-top: var(--ruimte-l);
+    }
+  }
+
+  @media print {
+    .recept-grid {
+      display: block;
+    }
+
+    .vlak-kruimelpad,
+    .vlak-tags,
+    .vlak-intro,
+    .vlak-fotos,
+    .vlak-affiliate {
+      display: none;
+    }
+  }
+</style>

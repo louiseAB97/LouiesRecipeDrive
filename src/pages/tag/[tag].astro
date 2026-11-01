@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../../layouts/Basis.astro";
+import ReceptKaart from "../../components/ReceptKaart.astro";
+import { fotosPerRecept } from "../../utils/fotos";
+
+export async function getStaticPaths() {
+  const recepten = await getCollection("recepten", ({ data }) => !data.concept);
+  const tags = [...new Set(recepten.flatMap((r) => r.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { recepten: recepten.filter((r) => r.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag } = Astro.params;
+const { recepten } = Astro.props;
+const fotos = fotosPerRecept();
+---
+
+<Basis titel={`#${tag}`} beschrijving={`Recepten met de tag ${tag}.`}>
+  <nav class="kruimel mono" aria-label="Kruimelpad">
+    <a href="/recepten">recepten</a>
+    <span aria-hidden="true"> / </span>
+    <a href="/tags">tags</a>
+    <span aria-hidden="true"> / </span>
+    <span>{tag}</span>
+  </nav>
+  <h1>#{tag}</h1>
+  <p class="muted">{recepten.length} recepten</p>
+  <ul class="raster" role="list">
+    {
+      recepten.map((recept) => (
+        <li>
+          <ReceptKaart recept={recept} foto={fotos.get(recept.id)?.[0]} />
+        </li>
+      ))
+    }
+  </ul>
+</Basis>
+
+<style>
+  .kruimel {
+    font-size: 0.8rem;
+    margin-bottom: var(--ruimte-l);
+  }
+
+  .kruimel a {
+    color: var(--grijs);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .kruimel a:hover {
+    color: var(--inkt);
+    text-decoration: underline;
+  }
+
+  .raster {
+    display: grid;
+    gap: var(--ruimte-l) var(--ruimte-m);
+    list-style: none;
+    margin: var(--ruimte-l) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .raster {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .raster {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

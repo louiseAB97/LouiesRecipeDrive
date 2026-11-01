@@ -1,0 +1,30 @@
+/* Design tokens — één plek voor kleuren, lettertypen en maatvoering.
+   Pas hier aan voor een andere stijl of een donkere variant. */
+
+:root {
+  /* Kleuren */
+  --inkt: #111;
+  --papier: #fff;
+  --grijs: #555;
+  --lijn: #111;
+  --lijn-zacht: #e3e3e3;
+  --vlak: #f4f4f4;
+  --accent-hover: #14532d; /* donkergroen bij hover op recepttitels */
+  --focus: #14532d;
+
+  /* Lettertypen */
+  --font-accent: "Space Grotesk Variable", "Space Grotesk", system-ui, sans-serif;
+  --font-tekst: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Maatvoering */
+  --regel-dun: 1px solid var(--lijn);
+  --regel-haarlijn: 1px solid var(--lijn-zacht);
+  --ruimte-xs: 0.5rem;
+  --ruimte-s: 0.75rem;
+  --ruimte-m: 1.25rem;
+  --ruimte-l: 2rem;
+  --ruimte-xl: 4rem;
+  --pagina-breedte: 72rem;
+  --tekst-breedte: 65ch;
+}

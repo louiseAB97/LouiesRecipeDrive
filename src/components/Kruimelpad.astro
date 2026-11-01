@@ -1,0 +1,45 @@
+---
+interface Props {
+  eersteTag?: string;
+}
+const { eersteTag } = Astro.props;
+---
+
+<nav class="kruimelpad mono" aria-label="Kruimelpad">
+  <a href="/recepten">recepten</a>
+  {
+    eersteTag && (
+      <>
+        <span aria-hidden="true"> / </span>
+        <a href={`/tag/${eersteTag}`}>{eersteTag}</a>
+      </>
+    )
+  }
+</nav>
+
+<style>
+  .kruimelpad {
+    font-size: 0.8rem;
+    color: var(--grijs);
+  }
+
+  .kruimelpad a {
+    color: var(--grijs);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .kruimelpad a:hover {
+    color: var(--inkt);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  @media print {
+    .kruimelpad {
+      display: none;
+    }
+  }
+</style>

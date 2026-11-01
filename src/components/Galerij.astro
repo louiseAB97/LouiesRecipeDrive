@@ -1,0 +1,120 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  fotos: ImageMetadata[];
+  titel: string;
+}
+const { fotos, titel } = Astro.props;
+
+const BREEDTES = [560, 880] as const;
+
+async function variant(foto: ImageMetadata, breedte: number, format = "webp") {
+  return getImage({ src: foto, width: breedte, format });
+}
+
+const groot = await Promise.all(
+  fotos.map((f) => Promise.all(BREEDTES.map((b) => variant(f, b)))),
+);
+const avif = await variant(fotos[0], 880, "avif");
+const thumbs = await Promise.all(fotos.map((f) => variant(f, 160)));
+
+const srcset = (i: number) =>
+  groot[i].map((v) => `${v.src} ${v.attributes.width}w`).join(", ");
+const alt = (i: number) => (i === 0 ? titel : `${titel} – foto ${i + 1}`);
+---
+
+<figure class="galerij">
+  <picture>
+    <source type="image/avif" srcset={avif.src} />
+    <img
+      src={groot[0][1].src}
+      srcset={srcset(0)}
+      sizes="(min-width: 56rem) 520px, 100vw"
+      alt={alt(0)}
+      data-hoofdfoto
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+  {
+    fotos.length > 1 && (
+      <ol class="miniaturen" role="list">
+        {fotos.slice(1).map((_, n) => {
+          const i = n + 1;
+          return (
+            <li>
+              <a
+                href={groot[i][1].src}
+                data-miniatuur
+                data-src={groot[i][1].src}
+                data-srcset={srcset(i)}
+                data-alt={alt(i)}
+                aria-label={`Toon ${alt(i)} als hoofdfoto`}
+              >
+                <img src={thumbs[i].src} alt={alt(i)} loading="lazy" decoding="async" />
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    )
+  }
+</figure>
+
+<script>
+  const hoofdfoto = document.querySelector<HTMLImageElement>("[data-hoofdfoto]");
+  document
+    .querySelectorAll<HTMLAnchorElement>("[data-miniatuur]")
+    .forEach((link) =>
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (!hoofdfoto) return;
+        hoofdfoto.src = link.dataset.src ?? hoofdfoto.src;
+        hoofdfoto.srcset = link.dataset.srcset ?? "";
+        hoofdfoto.alt = link.dataset.alt ?? hoofdfoto.alt;
+      }),
+    );
+</script>
+
+<style>
+  .galerij {
+    margin: 0;
+  }
+
+  .galerij img[data-hoofdfoto] {
+    width: 100%;
+    aspect-ratio: 5 / 6;
+    object-fit: cover;
+  }
+
+  .miniaturen {
+    display: flex;
+    gap: var(--ruimte-xs);
+    list-style: none;
+    margin: var(--ruimte-xs) 0 0;
+    padding: 0;
+  }
+
+  .miniaturen a {
+    display: block;
+    border: var(--regel-haarlijn);
+  }
+
+  .miniaturen a:hover {
+    border-color: var(--inkt);
+  }
+
+  .miniaturen img {
+    width: 4.5rem;
+    aspect-ratio: 5 / 6;
+    object-fit: cover;
+  }
+
+  @media print {
+    .galerij {
+      display: none;
+    }
+  }
+</style>

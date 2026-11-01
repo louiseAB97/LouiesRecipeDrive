@@ -1,0 +1,31 @@
+---
+import { marked } from "marked";
+
+interface Props {
+  tekst: string;
+}
+const { tekst } = Astro.props;
+const html = await marked.parse(tekst);
+---
+
+<div class="intro" set:html={html} />
+
+<style>
+  .intro {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    max-width: var(--tekst-breedte);
+  }
+
+  .intro :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  @media print {
+    .intro {
+      display: none;
+    }
+  }
+</style>

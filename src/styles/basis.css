@@ -1,0 +1,111 @@
+@charset "UTF-8";
+
+/* Zelf gehoste lettertypen (fontsource) — sneller en privacyvriendelijk
+   dan Google Fonts. Alleen latin-subsets en benodigde gewichten. */
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/inter/wght-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/700.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-tekst);
+  color: var(--inkt);
+  background: var(--papier);
+}
+
+body {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--pagina-breedte);
+  margin-inline: auto;
+  padding: var(--ruimte-l) var(--ruimte-m);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 var(--ruimte-s);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+h3 {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+p {
+  margin: 0 0 var(--ruimte-m);
+  max-width: var(--tekst-breedte);
+}
+
+a {
+  color: var(--inkt);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Toegankelijkheid: zichtbare focus, grote aanraakdoelen. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+nav a,
+button,
+input,
+summary {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.muted {
+  color: var(--grijs);
+}
+
+/* Schermlezer-tekst */
+.visueel-verborgen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
