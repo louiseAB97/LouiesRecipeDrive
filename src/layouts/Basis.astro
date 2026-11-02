@@ -17,7 +17,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="nl">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,11 +41,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <header class="site-header">
       <a class="wordmark" href="/">Louie's Recipe Drive</a>
-      <nav aria-label="Hoofdnavigatie">
-        <a href="/recepten">Recepten</a>
+      <nav aria-label="Main navigation">
+        <a href="/recipes">Recipes</a>
         <a href="/tags">Tags</a>
-        <a href="/zoeken">Zoeken</a>
-        <a href="/over">Over</a>
+        <a href="/search">Search</a>
+        <a href="/about">About</a>
       </nav>
     </header>
 
@@ -57,11 +57,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <div class="footer-tekst">
         <p class="wordmark">Louie's Recipe Drive</p>
         <p class="muted">
-          Recepten door de jaren heen — verzameld, getest en opgeschreven door Louie.
+          Recipes through the years — collected, tested and written down by Louie.
         </p>
         <nav aria-label="Footer" class="footer-links">
           <a href="/privacy">Privacy</a>
-          <a href="/over">Over</a>
+          <a href="/about">About</a>
         </nav>
       </div>
       <NieuwsbriefBlok compact />

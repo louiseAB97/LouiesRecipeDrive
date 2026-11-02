@@ -5,8 +5,8 @@ import { kiesSuggesties } from "../utils/suggesties";
 import ReceptKaart from "./ReceptKaart.astro";
 
 interface Props {
-  huidig: CollectionEntry<"recepten">;
-  alle: CollectionEntry<"recepten">[];
+  huidig: CollectionEntry<"recipes">;
+  alle: CollectionEntry<"recipes">[];
   fotos: Map<string, ImageMetadata[]>;
 }
 
@@ -18,9 +18,9 @@ const suggesties = kiesSuggesties(huidig, alle);
   suggesties.length > 0 && (
     <section class="suggesties" aria-labelledby="kop-suggesties">
       <div class="suggesties-kop">
-        <h2 id="kop-suggesties">Misschien vind je dit ook lekker</h2>
-        <a href="/recepten" class="mono">
-          Alle recepten →
+        <h2 id="kop-suggesties">You might also like</h2>
+        <a href="/recipes" class="mono">
+          All recipes →
         </a>
       </div>
       <ul class="suggesties-raster" role="list">

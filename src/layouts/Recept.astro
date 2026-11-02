@@ -15,13 +15,13 @@ import AffiliateSlot from "../components/AffiliateSlot.astro";
 import Suggesties from "../components/Suggesties.astro";
 
 interface Props {
-  recept: CollectionEntry<"recepten">;
-  alleRecepten: CollectionEntry<"recepten">[];
+  recept: CollectionEntry<"recipes">;
+  alleRecepten: CollectionEntry<"recipes">[];
   fotos: Map<string, ImageMetadata[]>;
 }
 
 const { recept, alleRecepten, fotos } = Astro.props;
-const { titel, personen, prijs, tijd, tags, intro, ingredienten, toelichting } =
+const { title, persons, price, cookingtime, tags, intro, ingredients, notes } =
   recept.data;
 const lijst = fotos.get(recept.id) ?? [];
 
@@ -35,7 +35,7 @@ const eersteAlinea = intro ? stripMarkdown(intro.split(/\n\s*\n/)[0]) : null;
 const beschrijving =
   eersteAlinea && eersteAlinea.length > 0
     ? eersteAlinea.slice(0, 160)
-    : `Recept voor ${titel} met ${ingredienten
+    : `Recipe for ${title} with ${ingredients
         .slice(0, 4)
         .join(", ")
         .toLowerCase()}.`;
@@ -54,13 +54,13 @@ const stappen = (recept.body ?? "")
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Recipe",
-  name: titel,
+  name: title,
   description: beschrijving,
   url: new URL(Astro.url.pathname, Astro.site).toString(),
-  inLanguage: "nl",
+  inLanguage: "en",
   ...(beeldUrls.length > 0 && { image: beeldUrls }),
-  ...(ingredienten.length > 0 && {
-    recipeIngredient: ingredienten.map((i) => i.replace(/\*+$/, "")),
+  ...(ingredients.length > 0 && {
+    recipeIngredient: ingredients.map((i) => i.replace(/\s*\*+\s*$/, "")),
   }),
   ...(stappen.length > 0 && {
     recipeInstructions: stappen.map((tekst, i) => ({
@@ -69,36 +69,36 @@ const jsonLd = {
       text: tekst,
     })),
   }),
-  ...(personen && { recipeYield: `${personen} personen` }),
-  ...(tijd && { totalTime: `PT${tijd}M` }),
+  ...(persons && { recipeYield: `${persons} ${persons === 1 ? "person" : "persons"}` }),
+  ...(cookingtime && { totalTime: `PT${cookingtime}M` }),
   ...(tags.length > 0 && { keywords: tags.join(", ") }),
 };
 ---
 
 <Basis
-  titel={titel}
+  titel={title}
   beschrijving={beschrijving}
   ogAfbeelding={beeldUrls[0]}
   jsonLd={jsonLd}
 >
   <article class:list={["recept-grid", { "zonder-fotos": lijst.length === 0 }]}>
     <div class="vlak-kruimelpad"><Kruimelpad eersteTag={tags[0]} /></div>
-    <h1 class="vlak-titel">{titel}</h1>
+    <h1 class="vlak-titel">{title}</h1>
     <div class="vlak-meta">
-      <MetaChips personen={personen} prijs={prijs} tijd={tijd} />
+      <MetaChips personen={persons} prijs={price} tijd={cookingtime} />
     </div>
     <div class="vlak-tags"><Tags tags={tags} /></div>
     {intro && <div class="vlak-intro"><Intro tekst={intro} /></div>}
     {
       lijst.length > 0 && (
         <div class="vlak-fotos">
-          <Galerij fotos={lijst} titel={titel} />
+          <Galerij fotos={lijst} titel={title} />
         </div>
       )
     }
     <div class="vlak-benodigdheden">
-      <Ingredienten ingredienten={ingredienten} personen={personen} />
-      {toelichting && <Toelichting tekst={toelichting} />}
+      <Ingredienten ingredienten={ingredients} personen={persons} />
+      {notes && <Toelichting tekst={notes} />}
     </div>
     <div class="vlak-bereiding">
       <Bereiding><slot /></Bereiding>

@@ -1,8 +1,9 @@
 # Louie's Recipe Drive
 
 Een snelle, statische receptensite gebouwd met [Astro](https://astro.build).
-De recepten staan als losse Markdown-bestanden in `src/content/recepten/` —
-dat is de enige bron van waarheid. Er is geen database en geen server.
+De recepten staan als losse Engelstalige Markdown-bestanden in
+`src/content/recipes/` — dat is de enige bron van waarheid. Er is geen
+database en geen server. De site zelf is ook Engelstalig.
 
 ## Benodigd
 
@@ -13,7 +14,7 @@ dat is de enige bron van waarheid. Er is geen database en geen server.
   export PATH="$HOME/.local/node/bin:$PATH"
   ```
 
-- **uv** — voor de Python-scripts (`import` en `status`). uv regelt zelf de
+- **uv** — voor het Python-script (`status`). uv regelt zelf de
   juiste Python-versie (zie `.python-version`) en de virtuele omgeving
   (`.venv`) aan de hand van `pyproject.toml` en `uv.lock`.
 
@@ -25,48 +26,49 @@ dat is de enige bron van waarheid. Er is geen database en geen server.
 | `npm run dev`     | Start de site lokaal op <http://localhost:4321>.               |
 | `npm run build`   | Bouwt de statische site naar `dist/` (dat zet je online).      |
 | `npm run preview` | Bekijkt de gebouwde versie lokaal.                             |
-| `npm run import`  | Leest `recepten.txt` en maakt ontbrekende `.md`-bestanden aan. |
 | `npm run status`  | Toont wat er per recept nog ontbreekt en schrijft `overzicht.json`. |
 
 ## Werkwijze
 
 ### Recept aanpassen of toevoegen
 
-Elk recept is één bestand: `src/content/recepten/<slug>.md`. Bewerk de
+Elk recept is één bestand: `src/content/recipes/<slug>.md`. De bestandsnaam
+(kleine letters, koppeltekens) wordt de URL: `/recipes/<slug>`. Bewerk de
 frontmatter bovenin en de bereiding eronder (gewone Markdown).
 
 ```yaml
 ---
-titel: Penne met room en rucola
-personen: 4            # aantal personen, of null
-prijs: "Circa 3 euro"  # vrij veld, of null
-tags: [pasta, snel]    # kleine letters, koppeltekens, uniek
-tijd: 20               # bereidingstijd in minuten, of null
+title: Penne with cream and rocket
+persons: 4             # aantal personen, of null
+price: "About 3 euros" # vrij veld, of null
+tags: [pasta, quick]   # kleine letters, koppeltekens, uniek
+cookingtime: 20        # bereidingstijd in minuten (alleen het getal), of null
 concept: false         # true = niet publiceren
 intro: null            # persoonlijke noot; Markdown toegestaan
-ingredienten:
+ingredients:
   - Penne
-  - Tofu*              # * verwijst naar de toelichting
-toelichting: null      # tekst onder de ingrediënten; begint met "* "
+  - Tofu*              # * verwijst naar de notes
+notes: null            # tekst onder de ingrediënten; begint met "\* "
 ---
 
-De bereiding als Markdown.
+The method as Markdown.
 ```
 
 - **intro** — een persoonlijke noot boven de bereiding. Gebruik `intro: |`
   en laat de regels eronder met twee spaties inspringen beginnen; lege
   regels maken nieuwe alinea's.
-- **toelichting** — uitleg bij een ingrediënt met `*`. Begin de tekst met
-  `\* ` (de backslash zorgt dat de ster letterlijk zichtbaar blijft).
+- **notes** — uitleg bij een ingrediënt met `*`. Gebruik `notes: |` en begin
+  elke regel met `\* ` (de backslash zorgt dat de ster letterlijk zichtbaar
+  blijft en dat YAML niet struikelt).
 - **concept: true** — het recept wordt niet gebouwd en nergens getoond.
 - Velden die je niet weet: laat ze op `null` staan, haal ze niet weg.
 
 ### Foto's toevoegen
 
-Zet foto's in `src/assets/recepten/`. De bestandsnaam bepaalt alles:
+Zet foto's in `src/assets/recipes/`. De bestandsnaam bepaalt alles:
 
-- `penne-met-room-en-rucola.jpg` → hoofdfoto
-- `penne-met-room-en-rucola-2.jpg`, `-3.jpg`, … → extra foto's
+- `penne-with-cream-and-rocket.jpg` → hoofdfoto
+- `penne-with-cream-and-rocket-2.jpg`, `-3.jpg`, … → extra foto's
 
 Toegestane formaten: `jpg`, `jpeg`, `png`, `webp`, `avif`. De site vindt,
 verkleint en optimaliseert ze automatisch — er hoeft niets in de frontmatter.
@@ -78,18 +80,9 @@ Geen foto's is ook prima: de pagina bouwt dan zonder afbeelding.
 npm run status
 ```
 
-Toont per recept wat ontbreekt (foto, personen, tags), hoeveel foto's er
+Toont per recept wat ontbreekt (foto, persons, tags), hoeveel foto's er
 zijn, en waarschuwt bij een `*` zonder toelichting of andersom. Schrijft
 ook `overzicht.json` (automatisch gegenereerd, niet aanpassen).
-
-### Opnieuw importeren
-
-```sh
-npm run import
-```
-
-Bestaande `.md`-bestanden worden **nooit overschreven** — alleen nieuwe
-recepten krijgen een bestand. Handmatige aanpassingen blijven dus behouden.
 
 ## Online zetten (Cloudflare Pages)
 
@@ -104,16 +97,14 @@ recepten krijgen een bestand. Handmatige aanpassingen blijven dus behouden.
 ## Structuur
 
 ```text
-recepten.txt              bronbestand (eenmalige import)
-scripts/importeren.py     import-script  → npm run import
 scripts/status.py         statusscript   → npm run status
-src/content/recepten/     de recepten (Markdown, bron van waarheid)
-src/assets/recepten/      receptfoto's (naamgeving: <slug>.jpg, <slug>-2.jpg)
+src/content/recipes/      de recepten (Markdown, bron van waarheid)
+src/assets/recipes/       receptfoto's (naamgeving: <slug>.jpg, <slug>-2.jpg)
 src/styles/               design tokens + basisstijl (kleuren, fonts, maten)
 src/layouts/              Basis.astro (alles) en Recept.astro (receptpagina)
 src/components/           bouwblokken (galerij, ingredienten, kaart, slots, ...)
-src/pages/                routes: /, /recepten, /recepten/<slug>, /tags,
-                          /tag/<naam>, /zoeken, /over, /privacy, 404
+src/pages/                routes: /, /recipes, /recipes/<slug>, /tags,
+                          /tag/<naam>, /search, /about, /privacy, 404
 overzicht.json            gegenereerd door `npm run status` (niet bewerken)
 ```
 

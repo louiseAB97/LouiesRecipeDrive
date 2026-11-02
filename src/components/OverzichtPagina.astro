@@ -5,7 +5,7 @@ import ReceptenVerkenner from "./ReceptenVerkenner.astro";
 import NieuwsbriefBlok from "./NieuwsbriefBlok.astro";
 
 interface Props {
-  recepten: CollectionEntry<"recepten">[];
+  recepten: CollectionEntry<"recipes">[];
   fotos: Map<string, ImageMetadata[]>;
   tags: string[];
   kop?: string;
@@ -16,8 +16,8 @@ const {
   recepten,
   fotos,
   tags,
-  kop = "Recepten",
-  ondertitel = "Alle recepten door de jaren heen — verzameld, getest en opgeschreven door Louie.",
+  kop = "Recipes",
+  ondertitel = "All the recipes through the years — collected, tested and written down by Louie.",
 } = Astro.props;
 ---
 

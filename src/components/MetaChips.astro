@@ -7,7 +7,7 @@ interface Props {
 
 const { personen, prijs, tijd } = Astro.props;
 const chips = [
-  personen ? `${personen} personen` : null,
+  personen ? `${personen} ${personen === 1 ? "person" : "persons"}` : null,
   prijs,
   tijd ? `${tijd} min` : null,
 ].filter(Boolean) as string[];

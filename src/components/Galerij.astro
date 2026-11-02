@@ -22,7 +22,7 @@ const thumbs = await Promise.all(fotos.map((f) => variant(f, 160)));
 
 const srcset = (i: number) =>
   groot[i].map((v) => `${v.src} ${v.attributes.width}w`).join(", ");
-const alt = (i: number) => (i === 0 ? titel : `${titel} – foto ${i + 1}`);
+const alt = (i: number) => (i === 0 ? titel : `${titel} – photo ${i + 1}`);
 ---
 
 <figure class="galerij">
@@ -51,7 +51,7 @@ const alt = (i: number) => (i === 0 ? titel : `${titel} – foto ${i + 1}`);
                 data-src={groot[i][1].src}
                 data-srcset={srcset(i)}
                 data-alt={alt(i)}
-                aria-label={`Toon ${alt(i)} als hoofdfoto`}
+                aria-label={`Show ${alt(i)} as main photo`}
               >
                 <img src={thumbs[i].src} alt={alt(i)} loading="lazy" decoding="async" />
               </a>

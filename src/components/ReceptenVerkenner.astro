@@ -4,7 +4,7 @@ import type { ImageMetadata } from "astro";
 import ReceptKaart from "./ReceptKaart.astro";
 
 interface Props {
-  recepten: CollectionEntry<"recepten">[];
+  recepten: CollectionEntry<"recipes">[];
   fotos: Map<string, ImageMetadata[]>;
   tags: string[];
 }
@@ -17,15 +17,15 @@ const { recepten, fotos, tags } = Astro.props;
     <input
       type="search"
       id="zoekveld"
-      placeholder="Zoek op titel, ingrediënt of tag…"
-      aria-label="Zoek recepten"
+      placeholder="Search by title, ingredient or tag…"
+      aria-label="Search recipes"
       autocomplete="off"
     />
     {
       tags.length > 0 && (
-        <div class="tagknoppen" role="group" aria-label="Filter op tag">
+        <div class="tagknoppen" role="group" aria-label="Filter by tag">
           <button type="button" class="actief" data-tag="">
-            Alles
+            All
           </button>
           {tags.map((tag) => (
             <button type="button" data-tag={tag}>
@@ -36,7 +36,7 @@ const { recepten, fotos, tags } = Astro.props;
       )
     }
     <p class="teller mono muted">
-      <span id="aantal">{recepten.length}</span> recepten
+      <span id="aantal">{recepten.length}</span> recipes
     </p>
   </div>
 
@@ -45,7 +45,7 @@ const { recepten, fotos, tags } = Astro.props;
       recepten.map((recept) => (
         <li
           class="item"
-          data-zoek={`${recept.data.titel} ${recept.data.ingredienten.join(" ")} ${recept.data.tags.join(" ")}`.toLowerCase()}
+          data-zoek={`${recept.data.title} ${recept.data.ingredients.join(" ")} ${recept.data.tags.join(" ")}`.toLowerCase()}
           data-tags={recept.data.tags.join(" ")}
         >
           <ReceptKaart recept={recept} foto={fotos.get(recept.id)?.[0]} />

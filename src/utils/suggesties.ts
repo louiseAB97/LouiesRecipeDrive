@@ -2,12 +2,12 @@ import { statSync } from "node:fs";
 import { join } from "node:path";
 import type { CollectionEntry } from "astro:content";
 
-type Recept = CollectionEntry<"recepten">;
+type Recept = CollectionEntry<"recipes">;
 
 /** Wijzigingsdatum van het bronbestand = "nieuwste" recept. */
 function wijzigingsdatum(recept: Recept): number {
   try {
-    const pad = join(process.cwd(), "src/content/recepten", `${recept.id}.md`);
+    const pad = join(process.cwd(), "src/content/recipes", `${recept.id}.md`);
     return statSync(pad).mtimeMs;
   } catch {
     return 0;
@@ -15,7 +15,7 @@ function wijzigingsdatum(recept: Recept): number {
 }
 
 function normaliseer(tekst: string): string {
-  return tekst.trim().toLowerCase().replace(/\*$/, "");
+  return tekst.trim().toLowerCase().replace(/\s*\*+$/, "");
 }
 
 function gedeeldeTags(a: Recept, b: Recept): number {
@@ -24,8 +24,8 @@ function gedeeldeTags(a: Recept, b: Recept): number {
 }
 
 function gedeeldeIngredienten(a: Recept, b: Recept): number {
-  const setA = new Set(a.data.ingredienten.map(normaliseer));
-  return b.data.ingredienten.filter((i) => setA.has(normaliseer(i))).length;
+  const setA = new Set(a.data.ingredients.map(normaliseer));
+  return b.data.ingredients.filter((i) => setA.has(normaliseer(i))).length;
 }
 
 /**

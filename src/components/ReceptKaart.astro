@@ -4,28 +4,28 @@ import type { ImageMetadata } from "astro";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
-  recept: CollectionEntry<"recepten">;
+  recept: CollectionEntry<"recipes">;
   foto?: ImageMetadata;
 }
 
 const { recept, foto } = Astro.props;
-const { titel, personen, prijs } = recept.data;
+const { title, persons, price } = recept.data;
 const meta = [
-  personen ? `${personen} pers.` : null,
-  prijs ? `± ${prijs}` : null,
+  persons ? `${persons} pers.` : null,
+  price ? `± ${price}` : null,
 ]
   .filter(Boolean)
   .join(" · ");
 ---
 
-<a class="kaart" href={`/recepten/${recept.id}`}>
+<a class="kaart" href={`/recipes/${recept.id}`}>
   {
     foto ? (
       <Image
         src={foto}
         width={640}
         format="webp"
-        alt={titel}
+        alt={title}
         loading="lazy"
         class="kaart-foto"
       />
@@ -33,7 +33,7 @@ const meta = [
       <div class="kaart-vlak" aria-hidden="true" />
     )
   }
-  <span class="kaart-titel">{titel}</span>
+  <span class="kaart-titel">{title}</span>
   {meta && <span class="kaart-meta mono muted">{meta}</span>}
 </a>
 

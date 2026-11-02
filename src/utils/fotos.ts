@@ -1,14 +1,14 @@
 import type { ImageMetadata } from "astro";
 
 /**
- * Vindt receptfoto's in src/assets/recepten/ op basis van de slug.
+ * Vindt receptfoto's in src/assets/recipes/ op basis van de slug.
  *
  * Bestandsnamen bepalen de volgorde:
  * - `<slug>.jpg`           -> hoofdfoto
  * - `<slug>-2.jpg` e.d.    -> extra foto's (oplopend)
  */
 const modules = import.meta.glob<{ default: ImageMetadata }>(
-  "../assets/recepten/*.{jpg,jpeg,png,webp,avif}",
+  "../assets/recipes/*.{jpg,jpeg,png,webp,avif}",
   { eager: true },
 );
 

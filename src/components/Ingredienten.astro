@@ -8,7 +8,7 @@ const { ingredienten, personen } = Astro.props;
 
 <section class="benodigdheden" aria-labelledby="kop-benodigdheden">
   <h2 id="kop-benodigdheden" class="mono">
-    Benodigdheden{personen ? ` · ${personen} personen` : ""}
+    Ingredients{personen ? ` · ${personen} ${personen === 1 ? "person" : "persons"}` : ""}
   </h2>
   <ul role="list">
     {ingredienten.map((ing) => <li>{ing}</li>)}

@@ -5,7 +5,7 @@ import ReceptKaart from "../../components/ReceptKaart.astro";
 import { fotosPerRecept } from "../../utils/fotos";
 
 export async function getStaticPaths() {
-  const recepten = await getCollection("recepten", ({ data }) => !data.concept);
+  const recepten = await getCollection("recipes", ({ data }) => !data.concept);
   const tags = [...new Set(recepten.flatMap((r) => r.data.tags))];
   return tags.map((tag) => ({
     params: { tag },
@@ -18,16 +18,16 @@ const { recepten } = Astro.props;
 const fotos = fotosPerRecept();
 ---
 
-<Basis titel={`#${tag}`} beschrijving={`Recepten met de tag ${tag}.`}>
-  <nav class="kruimel mono" aria-label="Kruimelpad">
-    <a href="/recepten">recepten</a>
+<Basis titel={`#${tag}`} beschrijving={`Recipes tagged ${tag}.`}>
+  <nav class="kruimel mono" aria-label="Breadcrumb">
+    <a href="/recipes">recipes</a>
     <span aria-hidden="true"> / </span>
     <a href="/tags">tags</a>
     <span aria-hidden="true"> / </span>
     <span>{tag}</span>
   </nav>
   <h1>#{tag}</h1>
-  <p class="muted">{recepten.length} recepten</p>
+  <p class="muted">{recepten.length} {recepten.length === 1 ? "recipe" : "recipes"}</p>
   <ul class="raster" role="list">
     {
       recepten.map((recept) => (

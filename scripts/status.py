@@ -1,9 +1,9 @@
-"""Statusoverzicht van alle recepten in src/content/recepten/.
+"""Statusoverzicht van alle recepten in src/content/recipes/.
 
 Gebruik:
     uv run scripts/status.py
 
-Toont per recept wat er ontbreekt (foto, personen, tags) en schrijft hetzelfde
+Toont per recept wat er ontbreekt (foto, persons, tags) en schrijft hetzelfde
 overzicht naar ``overzicht.json``. De Markdown-bestanden zijn de enige bron
 van waarheid; het JSON-bestand wordt elke run opnieuw gegenereerd.
 """
@@ -19,8 +19,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-RECEPTEN_MAP = ROOT / "src" / "content" / "recepten"
-FOTOS_MAP = ROOT / "src" / "assets" / "recepten"
+RECEPTEN_MAP = ROOT / "src" / "content" / "recipes"
+FOTOS_MAP = ROOT / "src" / "assets" / "recipes"
 OVERZICHT = ROOT / "overzicht.json"
 FOTO_EXTENSIES = {".jpg", ".jpeg", ".png", ".webp", ".avif"}
 
@@ -63,8 +63,8 @@ def beoordeel(pad: Path) -> ReceptStatus:
     """Bepaal de status van één receptbestand."""
     data = lees_frontmatter(pad)
     slug = pad.stem
-    titel = data.get("titel") or slug
-    ingredienten = data.get("ingredienten") or []
+    titel = data.get("title") or slug
+    ingredienten = data.get("ingredients") or []
     tags = data.get("tags") or []
     fotos = tel_fotos(slug)
 
@@ -76,18 +76,18 @@ def beoordeel(pad: Path) -> ReceptStatus:
     )
     if fotos == 0:
         status.ontbrekend.append("foto")
-    if data.get("personen") is None:
-        status.ontbrekend.append("personen")
+    if data.get("persons") is None:
+        status.ontbrekend.append("persons")
     if not tags:
         status.ontbrekend.append("tags")
     if not ingredienten:
-        status.ontbrekend.append("ingredienten")
+        status.ontbrekend.append("ingredients")
 
     if data.get("intro") is None:
         status.optioneel.append("intro")
 
     heeft_ster = any(str(i).rstrip().endswith("*") for i in ingredienten)
-    heeft_toelichting = data.get("toelichting") is not None
+    heeft_toelichting = data.get("notes") is not None
     if heeft_ster and not heeft_toelichting:
         status.waarschuwingen.append("ingrediënt met * maar geen toelichting")
     if heeft_toelichting and not heeft_ster:
@@ -105,7 +105,7 @@ def main() -> None:
         return [s for s in statussen if veld in s.ontbrekend]
 
     zonder_foto = met("foto")
-    zonder_personen = met("personen")
+    zonder_personen = met("persons")
     zonder_tags = met("tags")
     zonder_intro = [s for s in statussen if "intro" in s.optioneel]
     met_waarschuwing = [s for s in statussen if s.waarschuwingen]
@@ -136,7 +136,7 @@ def main() -> None:
     overzicht = {
         "_let_op": (
             "Automatisch gegenereerd door `npm run status`. Niet met de hand "
-            "bewerken — de Markdown-bestanden in src/content/recepten/ zijn de "
+            "bewerken — de Markdown-bestanden in src/content/recipes/ zijn de "
             "enige bron van waarheid."
         ),
         "gegenereerd": datetime.now(timezone.utc).isoformat(timespec="seconds"),

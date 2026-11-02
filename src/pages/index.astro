@@ -4,13 +4,13 @@ import Basis from "../layouts/Basis.astro";
 import OverzichtPagina from "../components/OverzichtPagina.astro";
 import { fotosPerRecept } from "../utils/fotos";
 
-const recepten = await getCollection("recepten", ({ data }) => !data.concept);
+const recepten = await getCollection("recipes", ({ data }) => !data.concept);
 const tags = [...new Set(recepten.flatMap((r) => r.data.tags))].sort();
 ---
 
 <Basis
   titel="Louie's Recipe Drive"
-  beschrijving="Alle recepten van Louie's Recipe Drive — verzameld, getest en opgeschreven door Louie."
+  beschrijving="All recipes on Louie's Recipe Drive — collected, tested and written down by Louie."
 >
   <OverzichtPagina recepten={recepten} fotos={fotosPerRecept()} tags={tags} />
 </Basis>

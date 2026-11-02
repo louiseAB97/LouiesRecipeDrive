@@ -5,27 +5,27 @@ interface Props {
 const { compact = false } = Astro.props;
 ---
 
-<aside class:list={["nieuwsbrief", { compact }]} aria-label="Nieuwsbrief">
-  {!compact && <h2>Blijf op de hoogte</h2>}
-  {compact && <h3>Nieuwsbrief</h3>}
+<aside class:list={["nieuwsbrief", { compact }]} aria-label="Newsletter">
+  {!compact && <h2>Stay in the loop</h2>}
+  {compact && <h3>Newsletter</h3>}
   <p class="muted">
-    Nieuwe recepten en keukentips in je inbox. Geen spam, alleen lekkers.
+    New recipes and kitchen tips in your inbox. No spam, just good food.
   </p>
   <form class="nieuwsbrief-form" action="#" method="post">
     <label class="visueel-verborgen" for={compact ? "mail-footer" : "mail-main"}
-      >E-mailadres</label
+      >Email address</label
     >
     <input
       id={compact ? "mail-footer" : "mail-main"}
       type="email"
       name="email"
-      placeholder="jij@voorbeeld.nl"
+      placeholder="you@example.com"
       autocomplete="email"
       required
     />
-    <button type="submit">Aanmelden</button>
+    <button type="submit">Subscribe</button>
   </form>
-  <p class="mono kleine-print muted">Binnenkort actief — de koppeling volgt.</p>
+  <p class="mono kleine-print muted">Coming soon — the sign-up isn't connected yet.</p>
 </aside>
 
 <style>
